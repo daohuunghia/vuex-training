@@ -33,6 +33,14 @@ const storeData = {
                 if (todo.id === todoId) todo.completed = !todo.completed
             })
 
+        },
+        DELETE_TODO(state, todoId) {
+            state.todos = state.todos.filter(todo => todo.id !== todoId)
+        }
+    },
+    actions: {
+        deleteTodo({ commit }, todoId) {
+            commit('DELETE_TODO', todoId)
         }
     }
 }

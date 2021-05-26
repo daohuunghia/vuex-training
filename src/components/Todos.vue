@@ -5,13 +5,14 @@
       <li v-for="todo in todos" :key="todo.id" :class="todo.completed ? 'completed' : ''">
         {{ todo.title }}
         <input type="checkbox" :checked="todo.completed" @change="MARK_TODO(todo.id)"/>
+        <button type="button" @click="deleteTodo(todo.id)">Delete</button>
       </li>
     </ul>
     <p v-else class="text-center">Not authorised</p>
   </div>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
   name: 'Todos',
   //C1:
@@ -38,9 +39,13 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['MARK_TODO'])
+    ...mapMutations(['MARK_TODO']),
     // markTodoCompleted(todoId) {
     //   this.$store.commit('MARK_TODO', todoId)
+    // }
+    ...mapActions(['deleteTodo'])
+    // deleteTodo (todoId) {
+    //   this.$store.dispatch('deleteTodo', todoId)
     // }
   }
 }
@@ -72,6 +77,12 @@ export default {
 .todo-list li button {
   float: right;
   margin-right: 20px;
+  margin-top: -8px;
+  height: 37px;
+  border: none;
+  background: #f44336;
+  color: #fff;
+  border-radius: 6px;
 }
 
 .todo-list li button:hover {
