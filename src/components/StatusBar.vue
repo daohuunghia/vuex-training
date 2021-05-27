@@ -1,5 +1,5 @@
 <template>
-  <div v-if="auth.isAuthenticated" class="status-bar">
+  <div v-if="auth.auth.isAuthenticated" class="status-bar">
     <h3>Todos done</h3>
     <ul>
       <li v-for="todo in doneTodos" :key="todo.id">

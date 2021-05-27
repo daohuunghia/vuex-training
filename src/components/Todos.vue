@@ -1,20 +1,29 @@
 <template>
-  <div class="todo-list">
-    <h1>List</h1>
-    <ul v-if="auth.isAuthenticated">
-      <li v-for="todo in todos" :key="todo.id" :class="todo.completed ? 'completed' : ''">
-        {{ todo.title }}
-        <input type="checkbox" :checked="todo.completed" @change="MARK_TODO(todo.id)"/>
-        <button type="button" @click="deleteTodo(todo.id)">Delete</button>
-      </li>
-    </ul>
-    <p v-else class="text-center">Not authorised</p>
+  <div class="row p-4">
+    <div class="col-md-12">
+      <TodoForm />
+    </div>
+    <div class="col-md-12">
+      <div class="todo-list">
+        <h1>List</h1>
+        <ul v-if="auth.auth.isAuthenticated">
+          <li v-for="todo in todos" :key="todo.id" :class="todo.completed ? 'completed' : ''">
+            {{ todo.title }}
+            <input type="checkbox" :checked="todo.completed" @change="MARK_TODO(todo.id)"/>
+            <button type="button" @click="deleteTodo(todo.id)">Delete</button>
+          </li>
+        </ul>
+        <p v-else class="text-center">Not authorised</p>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
+import TodoForm from './TodoForm'
 export default {
   name: 'Todos',
+  components: { TodoForm },
   //C1:
   computed: {
     ...mapState(['todos', 'auth'])
@@ -38,12 +47,15 @@ export default {
     return {
     }
   },
+  created() {
+    this.getTodos()
+  },
   methods: {
     ...mapMutations(['MARK_TODO']),
     // markTodoCompleted(todoId) {
     //   this.$store.commit('MARK_TODO', todoId)
     // }
-    ...mapActions(['deleteTodo'])
+    ...mapActions(['deleteTodo', 'getTodos'])
     // deleteTodo (todoId) {
     //   this.$store.dispatch('deleteTodo', todoId)
     // }

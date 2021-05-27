@@ -1,20 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
+
+import auth from './modules/auth'
 
 Vue.use(Vuex)
 
 const storeData = {
+    modules: {
+        auth
+    },
     state: {
-        todos: [
-            { id: 1, title: 'Todo 1', completed: true },
-            { id: 2, title: 'Todo 2', completed: true },
-            { id: 3, title: 'Todo 3', completed: false },
-            { id: 4, title: 'Todo 4', completed: false },
-            { id: 5, title: 'Todo 5', completed: false },
-        ],
-        auth: {
-            isAuthenticated: true
-        }
+        todos: []
     },
     getters: {
         doneTodos: state => {
@@ -25,9 +22,6 @@ const storeData = {
         }
     },
     mutations: {
-        TOGGLE_AUTH (state) {
-            state.auth.isAuthenticated = !state.auth.isAuthenticated
-        },
         MARK_TODO(state, todoId) {
             state.todos.map(todo => {
                 if (todo.id === todoId) todo.completed = !todo.completed
@@ -36,11 +30,40 @@ const storeData = {
         },
         DELETE_TODO(state, todoId) {
             state.todos = state.todos.filter(todo => todo.id !== todoId)
+        },
+        ADD_TODO(state, todo) {
+            state.todos.unshift(todo)
+        },
+        SET_TODO(state, data) {
+            state.todos = data
         }
     },
     actions: {
-        deleteTodo({ commit }, todoId) {
-            commit('DELETE_TODO', todoId)
+        async deleteTodo({ commit }, todoId) {
+            try {
+                await axios.delete(`https://jsonplaceholder.typicode.com/todos/${todoId}`)
+                commit('DELETE_TODO', todoId)
+            } catch (error) {
+                console.log(error)
+            }
+
+        },
+        addTodo({ commit }, todo) {
+            axios.post('https://jsonplaceholder.typicode.com/todos', todo).then(response => {
+                console.log(response)
+                commit('ADD_TODO', todo)
+            }).catch(e => {
+                console.log(e)
+            })
+
+        },
+        async getTodos({ commit }) {
+            try {
+                const response = await axios.get('https://jsonplaceholder.typicode.com/todos/?_limit=10')
+                commit('SET_TODO', response.data)
+            } catch (error){
+                console.log(error)
+            }
         }
     }
 }
